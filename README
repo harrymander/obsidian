@@ -1,0 +1,7 @@
+Obsidian Desktop File Updater
+=============================
+
+Place this repo in ~/.local/opt/obsidian and run update-obsidian.sh to update
+and install .desktop files for Obsidian to ~/.local dir.
+
+Requires jq and the gh cli (https://github.com/cli/cli).
