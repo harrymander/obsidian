@@ -27,23 +27,24 @@ appimage_name=Obsidian-$version.AppImage
 appimage_path=$OPTDIR/$appimage_name
 if [ -e "$appimage_path" ]; then
     log "Obsidian is up-to-date ($tag)"
-    exit 0
+else
+    current_version=$(find . -maxdepth 1 -name 'Obsidian-*.AppImage' | head -n1)
+    if [ -n "$current_version" ]; then
+        current_version=${current_version#./Obsidian-}
+        current_version=${current_version%*.AppImage}
+        log "Updating $current_version -> $version"
+    fi
+
+    rm -f "$OPTDIR"/*.AppImage
+    rm -f "$OPTDIR/obsidian.desktop"
+
+    log "Downloading $tag from GitHub..."
+    gh release -R "$GH_REPO" download -p "$appimage_name" -O "$appimage_path"
+    chmod +x "$appimage_path"
 fi
 
-current_version=$(find . -maxdepth 1 -name 'Obsidian-*.AppImage' | head -n1)
-if [ -n "$current_version" ]; then
-    current_version=${current_version#./Obsidian-}
-    current_version=${current_version%*.AppImage}
-    log "Updating $current_version -> $version"
-fi
-
-rm -f "$OPTDIR"/*.AppImage
-
-log "Downloading $tag from GitHub..."
-gh release -R "$GH_REPO" download -p "$appimage_name" -O "$appimage_path"
-chmod +x "$appimage_path"
-
-cat > "$OPTDIR/obsidian.desktop" << EOF
+if ! [ -e "$OPTDIR/obsidian.desktop" ]; then
+    cat > "$OPTDIR/obsidian.desktop" << EOF
 [Desktop Entry]
 Name=Obsidian
 Exec=$appimage_path %u
@@ -57,5 +58,6 @@ Categories=Office;
 MimeType=x-scheme-handler/obsidian;
 EOF
 
-ln -sf "$OPTDIR/obsidian.desktop" "$DESTPATH"
-log "Installed .desktop file to $DESTPATH"
+    ln -sf "$OPTDIR/obsidian.desktop" "$DESTPATH"
+    log "Installed .desktop file to $DESTPATH"
+fi
