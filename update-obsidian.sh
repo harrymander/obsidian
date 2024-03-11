@@ -54,7 +54,7 @@ StartupWMClass=obsidian
 X-AppImage-Version=$version
 Comment=Obsidian
 Categories=Office;
-MimeType=text/html;x-scheme-handler/obsidian;
+MimeType=x-scheme-handler/obsidian;
 EOF
 
 ln -sf "$OPTDIR/obsidian.desktop" "$DESTPATH"
